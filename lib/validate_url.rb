@@ -40,14 +40,14 @@ module ActiveModel
         schemes = [*options.fetch(:schemes)].map(&:to_s)
         begin
           uri = URI.parse(value)
-          hostname = uri.host || uri.to_s
+          hostname = self.class.get_hostname(uri)
 
           unless uri && uri.host && schemes.include?(uri.scheme)
             record.errors.add(attribute, :url, filtered_options(value))
             return
           end
 
-          if options.fetch(:no_local) && self.class.local?(hostname)
+          if options.fetch(:no_local) && self.class.local?(uri)
             record.errors.add(attribute, :url, filtered_options(value))
             return
           end
@@ -72,16 +72,19 @@ module ActiveModel
         (hostname =~ blacklisted_domains_regex).present?
       end
 
-      def self.local?(hostname)
-        ip = begin
-               Resolv.getaddress(hostname)
-             rescue Resolv::ResolvError
-               nil
-             end
+      def self.local?(uri)
+        addr = begin
+                 Addrinfo.getaddrinfo(uri.hostname, get_port(uri), nil, :STREAM).sample
+               rescue SocketError
+                 nil
+               rescue ArgumentError => e
+                 raise unless e.message.include?('hostname too long')
+                 nil
+               end
 
-        return false unless ip
+        return false unless addr
 
-        ip_addr = IPAddr.new(ip)
+        ip_addr = IPAddr.new(addr.ip_address)
 
         BLACKLISTED_INTERNAL_IPS.any? do |blacklisted_ip|
           # note 1: explicit usage of triple equals operator
@@ -96,6 +99,16 @@ module ActiveModel
         filtered = options.except(*RESERVED_OPTIONS)
         filtered[:value] = value
         filtered
+      end
+
+      private
+
+      def self.get_hostname(uri)
+        uri.host || uri.to_s
+      end
+
+      def self.get_port(uri)
+        uri.port || uri.default_port
       end
     end
 

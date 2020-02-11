@@ -166,7 +166,8 @@ describe "URL validation" do
       'https://127.0.0.1:5555',
       'https://127.0.0.1.xip.io',
       'https://169.254.1.1',
-      'https://0:0:0:0:0:ffff:7f00:1'
+      'https://0:0:0:0:0:ffff:7f00:1',
+      'http://0251.254.169.254'
     ].each do |url|
       it "should not allow #{url}" do
         @user.homepage = url
