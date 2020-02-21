@@ -1,0 +1,22 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.6
+    environment:
+      BUNDLE_PATH: ~/bundle
+      BUNDLE_APP_CONFIG: ~/bundle
+    working_directory: ~/checkr
+    steps:
+      - checkout
+      - restore_cache:
+          key:  bundle-local-{{ checksum "Gemfile.lock" }}
+      - run: gem install bundler
+      - run: bundle install --jobs 2
+      - save_cache:
+          key: bundle-local-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/bundle
+      - run:
+          name: Run rspec tests
+          command: bundle exec rspec

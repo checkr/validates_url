@@ -273,18 +273,30 @@ describe "URL validation" do
   end
 
   context "with SNS" do
+    let(:sns_status) { 200 }
     before do
       @user = UserWithArAndSns.new
+      stub_request(:post, "https://sns.us-east-2.amazonaws.com/")
+        .to_return(status: sns_status)
     end
 
     it "should allow a valid sns uri" do
       @user.homepage = "sns://AKIAIOSFODNN7EXAMPLE:wJalrXUtnFEMI%2FK7MDENG%2FbPxRfiCYEXAMPLEKEY@us-east-2/478320183963/checkr-webhooks"
-      expect(@user).not_to be_valid
+      expect(@user).to be_valid
     end
 
     it "should not allow invalid sns uri with colons used instead of slashes" do
-      @user.homepage = "sns://AKIAIOSFODNN7EXAMPLE:wJalrXUtnFEMI%2FK7MDENG%2FbPxRfiCYEXAMPLEKEY@us-east-2:478320183963:checkr-webhooks"
+      @user.homepage = "sns://AKIAIOSFODNN7EXAMPLE:wJalrXUtnFEMI%2FK7MDENG%2FbPxRfiCYEXAMPLEKEY@us-east-2:478320183963/checkr-webhooks"
       expect(@user).not_to be_valid
+    end
+
+    context 'when sns check returns 404' do
+      let(:sns_status) { 404 }
+
+      it "should allow a valid sns uri" do
+        @user.homepage = "sns://AKIAIOSFODNN7EXAMPLE:wJalrXUtnFEMI%2FK7MDENG%2FbPxRfiCYEXAMPLEKEY@us-east-2/478320183963/checkr-webhooks"
+        expect(@user).not_to be_valid
+      end
     end
   end
 end

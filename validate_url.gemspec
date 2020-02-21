@@ -41,8 +41,14 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<activemodel>, [">= 3.0.0"])
       s.add_runtime_dependency(%q<addressable>, [">= 2.5.0"])
       s.add_runtime_dependency(%q<aws-sdk-sns>, [">= 1.0.0"])
-      s.add_development_dependency(%q<rspec>, [">= 3.0.0"])
+
+      s.add_development_dependency(%q<activerecord>, [">= 3.0.0"])
       s.add_development_dependency(%q<diff-lcs>, [">= 1.1.2"])
+      s.add_development_dependency(%q<pry-byebug>, [">= 3.0.0"])
+      s.add_development_dependency(%q<pry>, [">= 0.0.0"])
+      s.add_development_dependency(%q<rspec>, [">= 3.0.0"])
+      s.add_development_dependency(%q<sqlite3>, [">= 1.0.0"])
+      s.add_development_dependency(%q<webmock>, [">= 3.8.0"])
     else
       s.add_dependency(%q<activemodel>, [">= 3.0.0"])
       s.add_dependency(%q<addressable>, [">= 2.5.0"])

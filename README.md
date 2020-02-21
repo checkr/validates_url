@@ -3,8 +3,8 @@
 This gem adds the capability of validating URLs to ActiveRecord and ActiveModel (Rails 3).
 
 ## Installation
-    
-```    
+
+```
 # add this to your Gemfile
 gem "validate_url"
 
@@ -16,7 +16,7 @@ sudo gem install validate_url
 
 ### With ActiveRecord
 
-```ruby    
+```ruby
 class Pony < ActiveRecord::Base
   # standard validation
   validates :homepage, :url => true
@@ -53,6 +53,10 @@ end
 The default error message `is not a valid URL`.
 You can pass the `:message => "my custom error"` option to your validation to define your own, custom message.
 
+### Tests
+
+- Install gems `bundle install`
+- Run tests `bundle exec rspec`
 
 ## Contributing
 
